@@ -1,5 +1,6 @@
 var http = require("http").createServer(handler); // require http server
 var fs = require("fs"); // require filesystem module
+var io = require("socket.io")(http);
 
 http.listen(8080);
 
