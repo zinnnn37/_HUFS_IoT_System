@@ -1,19 +1,19 @@
-var Gpio = require('onoff').Gpio
-var LED = new Gpio(4, 'out')
-var pushButton = new Gpio(17, 'in', 'both')
+var Gpio = require("onoff").Gpio;
+var LED = new Gpio(4, "out");
+var pushButton = new Gpio(17, "in", "both");
 
 pushButton.watch(function (err, value) {
     if (err) {
-        console.error('There was an error', err)
-        return
+        console.error("There was an error", err);
+        return;
     }
-    LED.writeSync(value)
-})
+    LED.writeSync(value);
+});
 
 function unexportOnClose() {
-    LED.writeSync(0)
-    LED.unexport()
-    pushButton.unexport()
+    LED.writeSync(0);
+    LED.unexport();
+    pushButton.unexport();
 }
 
-process.on('SIGINT', unexportOnClose)
+process.on("SIGINT", unexportOnClose);
