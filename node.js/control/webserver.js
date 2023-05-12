@@ -1,3 +1,5 @@
+// 이제 센서 연결하면 됨
+
 var http = require("http").createServer(handler);
 var fs = require("fs");
 var io = require("socket.io")(http);
