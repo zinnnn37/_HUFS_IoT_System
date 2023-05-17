@@ -37,6 +37,7 @@ function update_sensors() {
         pir_value = 0;
     } else {
         sock.emit("pir", "PIR NOT Detected");
+        // pir GPIO off
         console.log("PIR NOT Detected");
         pir_value = 1;
     }
