@@ -59,22 +59,22 @@ io.on("connection", function (socket) {
     socket.on("light", function (data) {
         lightvalue = data;
         if (lightvalue == 1) {
-            LED_GREEN.writeSync(green);
+            LED_GREEN.writeSync(1);
             console.log("Green LED is Turned On");
         } else if (lightvalue == 2) {
-            LED_GREEN.writeSync(green);
+            LED_GREEN.writeSync(0);
             console.log("Green LED is Turned Off");
         } else if (lightvalue == 3) {
-            LED_RED.writeSync(red);
+            LED_RED.writeSync(1);
             console.log("Red LED is Turned On");
         } else if (lightvalue == 4) {
-            LED_RED.writeSync(red);
+            LED_RED.writeSync(0);
             console.log("Red LED is Turned Off");
         } else if (lightvalue == 5) {
-            LED_YELLOW.writeSync(yellow);
+            LED_YELLOW.writeSync(1);
             console.log("Yellow LED is Turned On");
         } else if (lightvalue == 6) {
-            LED_YELLOW.writeSync(yellow);
+            LED_YELLOW.writeSync(0);
             console.log("Yellow LED is Turned Off");
         }
     });
