@@ -6,6 +6,7 @@ var io = require("socket.io")(http);
 var LED_GREEN = new Gpio(4, "out");
 var LED_RED = new Gpio(5, "out");
 var LED_YELLOW = new Gpio(6, "out");
+var PIR = new Gpio(17, "in");
 
 http.listen(8080, function () {
     console.log("NodeJs Server is running...");
@@ -32,12 +33,10 @@ function update_sensors() {
     pir_value = Math.floor(Math.random() * (10 - 1) + 1);
     if (pir_value >= 5) {
         sock.emit("pir", "PIR Detected");
-        // pir GPIO on
         console.log("PIR Detected");
         pir_value = 0;
     } else {
         sock.emit("pir", "PIR NOT Detected");
-        // pir GPIO off
         console.log("PIR NOT Detected");
         pir_value = 1;
     }
