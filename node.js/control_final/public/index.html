@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            h1 {
+                text-align: center;
+            }
+        </style>
+    </head>
+    <body>
+        <h1 align="center">IoT System Sensor Control</h1>
+
+        <table
+            border="1"
+            bordercolor="blue"
+            width="500"
+            height="300"
+            align="center"
+        >
+            <th>Sensors</th>
+            <th>values</th>
+            <tr>
+                <td align="center">LED</td>
+                <td align="left">
+                    <p><input type="checkbox" id="lightblue" /> BLUE LED</p>
+                    <p><input type="checkbox" id="lightgreen" /> GREEN LED</p>
+                    <p><input type="checkbox" id="lightyellow" /> YELLOW LED</p>
+                </td>
+            </tr>
+            <tr>
+                <td align="center">PIR Sensor</td>
+                <!-- can use Touch Sensor -->
+                <td align="left"><label id="pir"> PIR Not Detected </label></td>
+            </tr>
+            <tr>
+                <td align="center">Temperature</td>
+                <td align="left">
+                    <p>
+                        <label> Humidity </label><input type="text" id="humi" />
+                    </p>
+                    <p>
+                        <label> Temperature </label
+                        ><input type="text" id="temp" />
+                    </p>
+                </td>
+            </tr>
+        </table>
+
+        <script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io();
+            window.addEventListener("load", function () {
+                var lightbluebox = document.getElementById("lightblue");
+                var lightgreenbox = document.getElementById("lightgreen");
+                var lightyellowbox = document.getElementById("lightyellow");
+
+                function led_eventlistener(event) {
+                    var data = 1;
+                    switch (event.target.id) {
+                        case "lightblue":
+                            if (Number(event.target.checked) == 1) data = 1;
+                            else data = 2;
+                            break;
+                        case "lightgreen":
+                            if (Number(event.target.checked) == 1) data = 3;
+                            else data = 4;
+                            break;
+                        case "lightyellow":
+                            if (Number(event.target.checked) == 1) data = 5;
+                            else data = 6;
+                            break;
+                    }
+                    socket.emit("light", data);
+                }
+                lightbluebox.addEventListener("change", led_eventlistener);
+                lightgreenbox.addEventListener("change", led_eventlistener);
+                lightyellowbox.addEventListener("change", led_eventlistener);
+            });
+
+            socket.on("light", function (data) {
+                document.getElementById("light").checked = data;
+                socket.emit("light", data);
+            });
+
+            socket.on("pir", function (data) {
+                document.getElementById("pir").innerHTML = data;
+            });
+
+            socket.on("temp", function (data) {
+                document.getElementById("humi").value = data.humi;
+                document.getElementById("temp").value = data.temp;
+            });
+        </script>
+    </body>
+</html>

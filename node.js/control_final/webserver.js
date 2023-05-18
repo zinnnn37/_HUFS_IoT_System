@@ -1,0 +1,86 @@
+// 이제 센서 연결하면 됨
+
+var Gpio = require("onoff").Gpio;
+var http = require("http").createServer(handler);
+var fs = require("fs");
+var io = require("socket.io")(http);
+var LED_GREEN = new Gpio(4, "out");
+var LED_RED = new Gpio(5, "out");
+var LED_YELLOW = new Gpio(6, "out");
+var PIR = new Gpio(26, "in", "both");
+
+http.listen(8080, function () {
+    console.log("NodeJs Server is running...");
+});
+
+function handler(req, res) {
+    fs.readFile(__dirname + "/public/index.html", function (err, data) {
+        if (err) {
+            res.writeHead(404, { "Content-Type": "text/html" });
+            return res.end("404 Not Found");
+        }
+        res.writeHead(200, { "Content-Type": "text/html" });
+        res.write(data);
+        return res.end();
+    });
+}
+
+var pir_value = 0;
+var sock;
+var data = [];
+var i = 0;
+
+function update_sensors(value) {
+    pir_value = value;
+    if (pir_value == 1) {
+        sock.emit("pir", "PIR Detected");
+        console.log("PIR Detected");
+    } else {
+        sock.emit("pir", "PIR NOT Detected");
+        console.log("PIR NOT Detected");
+    }
+    data[0] = 50.0 + i;
+    data[1] = 25.0 + i++;
+
+    var temp = {
+        humi: data[0],
+        temp: data[1],
+    };
+    console.log(temp);
+    sock.emit("temp", temp);
+}
+
+io.on("connection", function (socket) {
+    var lightvalue = 0;
+    sock = socket;
+    setInterval(update_sensors, 3000);
+    PIR.watch(function (err, value) {
+        if (err) {
+            console.error("There was an error", err);
+            return;
+        }
+        update_sensors(value);
+    });
+    socket.on("light", function (data) {
+        lightvalue = data;
+        if (lightvalue == 1) {
+            LED_GREEN.writeSync(1);
+            console.log("Green LED is Turned On");
+        } else if (lightvalue == 2) {
+            LED_GREEN.writeSync(0);
+            console.log("Green LED is Turned Off");
+        } else if (lightvalue == 3) {
+            LED_RED.writeSync(1);
+            console.log("Red LED is Turned On");
+        } else if (lightvalue == 4) {
+            LED_RED.writeSync(0);
+            console.log("Red LED is Turned Off");
+        } else if (lightvalue == 5) {
+            LED_YELLOW.writeSync(1);
+            console.log("Yellow LED is Turned On");
+        } else if (lightvalue == 6) {
+            LED_YELLOW.writeSync(0);
+            console.log("Yellow LED is Turned Off");
+        }
+    });
+});
